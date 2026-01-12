@@ -68,5 +68,17 @@ int lire_pnm(const char *chemin, ImagePNM *out);
 void liberer_pnm(ImagePNM *img);
 int ecrire_pnm(const char *chemin, const ImagePNM *img);
 
+/* Test helper: read a PNM, reduce amplitude, compute deltas and folded bytes.
+ * Allocates *premiers_out (size = channels) and *folded_out (size = channels*(n-1)) on success.
+ * Caller must free both buffers when done.
+ */
+int pipeline_compute_folded_from_pnm(const char* chemin_pnm,
+                                    unsigned char **premiers_out,
+                                    unsigned char **folded_out,
+                                    size_t *folded_len_out,
+                                    uint8_t *type_out,
+                                    uint16_t *width_out,
+                                    uint16_t *height_out);
+
 
 #endif

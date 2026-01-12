@@ -5,7 +5,7 @@ LIBDIR = CoDec
 LIBSRC = $(LIBDIR)/src/codec.c
 LIBOBJ = $(LIBDIR)/codec.o
 LIB = $(LIBDIR)/libdif.so
-TARGET = dif
+TARGET = encodeur
 
 all: $(LIB) $(TARGET)
 
@@ -18,7 +18,16 @@ $(LIBOBJ): $(LIBSRC)
 $(TARGET): main.c $(LIB)
 	$(CC) $(CFLAGS) -I$(LIBDIR)/include main.c -L$(LIBDIR) -ldif -Wl,-rpath,'$$ORIGIN/CoDec' -o $@
 
-clean:
-	rm -f $(LIBOBJ) $(LIB) $(TARGET)
+TESTSRC = tests/test_pipeline.c
+TESTBIN = test_pipeline
 
-.PHONY: all clean
+clean:
+	rm -f $(LIBOBJ) $(LIB) $(TARGET) $(TESTBIN)
+
+$(TESTBIN): $(TESTSRC) $(LIB)
+	$(CC) $(CFLAGS) -I$(LIBDIR)/include $(TESTSRC) -L$(LIBDIR) -ldif -Wl,-rpath,'$$ORIGIN/CoDec' -o $@
+
+test: all $(TESTBIN)
+	./$(TESTBIN)
+
+.PHONY: all clean test
