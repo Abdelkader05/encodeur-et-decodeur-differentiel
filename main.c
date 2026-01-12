@@ -1,42 +1,37 @@
+
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-
-int splitpath(char *fullpath, char **dir, char **file, char **ext) {
-    int indice_file = 0;
-    int * indice_ext = NULL;
-    for (int i = 0; fullpath[i] != '\0'; i++) {
-        if (fullpath[i] == '/') indice_file = i + 1;
-        if (fullpath[i] == '.' && i > indice_file) *indice_ext = i;
-    }
-    
-    *file = fullpath + indice_file ;
-    if (indice_ext != NULL && fullpath[*indice_ext] != '\0') {
-        fullpath[*indice_ext] = '\0';
-        *ext = fullpath + *indice_ext;
-    }
-    else {
-        *ext = NULL;
-    }
-    if (indice_file == 0) {
-        *dir = NULL;
-    } else {
-        *dir = fullpath;
-        fullpath[indice_file - 1] = '\0';
-    }
-    return 1;
-}
+#include <string.h>
+#include "codec.h"
 
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        printf("Usage: %s fichier\n", argv[0]);
+    if ((argc >= 1 && strcmp(argv[1], "-h") == 0) || argc < 4) {
+        fprintf(stderr, " ./diftool -c in.pnm out.dif   (compress)\n./diftool -d in.dif out.pnm   (decompress)\n");
         return 1;
     }
-    
-    char *dir = NULL, *file = NULL, *ext = NULL;
-    splitpath(argv[1], &dir, &file, &ext);
-    printf("dir: %s\n", dir ? dir : "(aucun)");
-    printf("file: %s\n", file);
-    printf("ext: %s\n", ext);
+    int compress = 0;
+    if (strcmp(argv[1], "-c") == 0) compress = 1;
+    else if (strcmp(argv[1], "-d") == 0) compress = 0;
+    else {
+        fprintf(stderr, "Option invalide\n"); return 1;
+    }
+
+    const char *in = argv[2];
+    const char *out = argv[3];
+
+    int rc;
+    if (compress) {
+        printf("Compression: %s -> %s\n", in, out);
+        rc = pnm_vers_dif(in, out);
+    } else {
+        printf("Décompression: %s -> %s\n", in, out);
+        rc = dif_vers_pnm(in, out);
+    }
+    if (rc != 0) {
+        fprintf(stderr, "Opération échouée (code %d)\n", rc);
+        return rc;
+    }
+    printf("Terminé.\n");
     return 0;
 }
