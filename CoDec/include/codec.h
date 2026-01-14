@@ -40,13 +40,13 @@
  * - chemin_dif : chemin du fichier DIF à créer
  * Retourne 0 (DIF_OK) ou code d'erreur > 0
  */
-int pnm_vers_dif(const char *chemin_image_pnm, const char *chemin_dif);
+int pnmtodif(const char *chemin_image_pnm, const char *chemin_dif);
 
 /*décodeur DIF  PNM
  * - chemin_dif : chemin du fichier DIF
  * - chemin_image_pnm : chemin du fichier PGM/PPM à écrire
  */
-int dif_vers_pnm(const char *chemin_dif, const char *chemin_image_pnm);
+int diftopnm(const char *chemin_dif, const char *chemin_image_pnm);
 
 
 /* Représentation d'une image PNM en mémoire */
