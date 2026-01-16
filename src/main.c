@@ -4,9 +4,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "Codec/include/codec.h"
+#include "codec.h"
 
-static void usage(const char *prog)
+static void help(const char *prog)
 {
     printf("Usage: %s [options] fichier\n", prog);
     printf("Options:\n");
@@ -42,10 +42,10 @@ int main(int argc, char *argv[])
     const char *viewer = NULL;
     const char *input = NULL;
 
-    /* --- parsing options --- */
+
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "-h")) {
-            usage(argv[0]);
+            help(argv[0]);
             return 0;
         }
         else if (!strcmp(argv[i], "-v")) {
@@ -61,12 +61,12 @@ int main(int argc, char *argv[])
 
     if (!input) {
         fprintf(stderr, "Erreur: aucun fichier fourni\n");
-        usage(argv[0]);
+        help(argv[0]);
         return 1;
     }
 
     /* =========================================================
-     * CAS 1 : entrée .dif → décodage
+     * .dif → décodage
      * ========================================================= */
     if (has_ext(input, ".dif")) {
         char out[256];
@@ -83,12 +83,12 @@ int main(int argc, char *argv[])
         if (viewer) {
             char cmd[512];
             snprintf(cmd, sizeof cmd, "%s %s &", viewer, out);
-            system(cmd);
+            return 0;
         }
     }
 
     /* =========================================================
-     * CAS 2 : image → DIF
+     * image → DIF
      * ========================================================= */
     else {
         char pnm_file[256];

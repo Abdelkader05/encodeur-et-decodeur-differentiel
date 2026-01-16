@@ -1,33 +1,30 @@
-# Makefile minimaliste : construit libdif.so et diftool
-CC = gcc
-CFLAGS = -Wall -g -fPIC
-LIBDIR = CoDec
-LIBSRC = $(LIBDIR)/src/codec.c
-LIBOBJ = $(LIBDIR)/codec.o
-LIB = $(LIBDIR)/libdif.so
-TARGET = encodeur
+CC := gcc
+STD := -std=c17
+SRC := src/
+BIN := bin/
+LPATH := CoDec/
 
-all: $(LIB) $(TARGET)
+PFLAGS :=  -I$(LPATH)include
+CFLAGS := -Wall -O2
 
-$(LIB): $(LIBOBJ)
-	$(CC) -shared -o $@ $^
+# répertoire où se trouve la lib. (truc.h|libtruc.so)
 
-$(LIBOBJ): $(LIBSRC)
-	$(CC) $(CFLAGS) -I$(LIBDIR)/include -c $< -o $@
+LFLAGS := -lm -Wl,-rpath,$(LPATH)lib -L$(LPATH) -lcodec
 
-$(TARGET): main.c $(LIB)
-	$(CC) $(CFLAGS) -I$(LIBDIR)/include main.c -L$(LIBDIR) -ldif -Wl,-rpath,'$$ORIGIN/CoDec' -o $@
+# Build the codec library first
+.PHONY: codec
 
-TESTSRC = tests/test_pipeline.c
-TESTBIN = test_pipeline
+# executable quelconque utilisant uniquement libtruc.so
+encodeur : codec $(BIN)main.o
+	$(CC) $(BIN)main.o $(LFLAGS) -o $@
+
+codec:
+	$(MAKE) -C $(LPATH)
+	
+$(BIN)%.o : $(SRC)%.c
+	$(CC) $< -c $(STD) $(PFLAGS) $(CFLAGS) -o $@
 
 clean:
-	rm -f $(LIBOBJ) $(LIB) $(TARGET) $(TESTBIN)
+	rm $(BIN)main.o encodeur $(LPATH)*.o $(LPATH)*.so
 
-$(TESTBIN): $(TESTSRC) $(LIB)
-	$(CC) $(CFLAGS) -I$(LIBDIR)/include $(TESTSRC) -L$(LIBDIR) -ldif -Wl,-rpath,'$$ORIGIN/CoDec' -o $@
 
-test: all $(TESTBIN)
-	./$(TESTBIN)
-
-.PHONY: all clean test
