@@ -82,9 +82,8 @@ int main(int argc, char *argv[])
 
         if (viewer) {
             char cmd[512];
-            snprintf(cmd, sizeof cmd, "%s %s &", viewer, out);
-            system(cmd);
-            return 0;
+            snprintf(cmd, sizeof cmd, "%s %s \n", viewer, out);
+            return system(cmd);
         }
     }
 
@@ -109,7 +108,7 @@ int main(int argc, char *argv[])
                 printf("Conversion image → PNM : %s → %s\n",
                        input, pnm_file);
 
-            if (system(cmd) != 0 || access(pnm_file, F_OK) != 0) {
+            if (system(cmd) != 0 ) {
                 fprintf(stderr, "Erreur : conversion impossible (%s)\n", input);
                 return 1;
             }

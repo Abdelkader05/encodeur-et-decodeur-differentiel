@@ -13,7 +13,7 @@ LFLAGS := -lm -Wl,-rpath,$(LPATH)lib -L$(LPATH)lib -lcodec
 .PHONY: codec
 
 # executable quelconque utilisant uniquement libtruc.so
-../encodeur : codec $(BIN)main.o
+encodeur : codec $(BIN)main.o
 	$(CC) $(BIN)main.o $(LFLAGS) -o $@
 
 codec:
@@ -23,6 +23,6 @@ $(BIN)%.o : $(SRC)%.c
 	$(CC) $< -c $(STD) $(PFLAGS) $(CFLAGS) -o $@
 
 clean:
-	rm $(BIN)main.o ../encodeur $(LPATH)*.o $(LPATH)/lib/*.so
+	rm $(BIN)main.o encodeur $(LPATH)*.o $(LPATH)lib/*.so
 
 
