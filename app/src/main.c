@@ -3,6 +3,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <time.h>
 
 #include "codec.h"
 
@@ -12,6 +13,7 @@ static void help(const char *prog)
     printf("Options:\n");
     printf("  -h           afficher cette aide\n");
     printf("  -v           mode verbeux\n");
+    printf("  -t           affiche le temps d'exécution\n");
     printf("  -o <viewer>  ouvrir l'image PNM après décodage\n");
 }
 
@@ -39,8 +41,10 @@ static int is_pnm(const char *name)
 int main(int argc, char *argv[])
 {
     int verbose = 0;
+    int test = 0;
     const char *viewer = NULL;
     const char *input = NULL;
+    clock_t start_time = clock();
 
 
     for (int i = 1; i < argc; i++) {
@@ -50,6 +54,9 @@ int main(int argc, char *argv[])
         }
         else if (!strcmp(argv[i], "-v")) {
             verbose = 1;
+        }
+        else if (!strcmp(argv[i], "-t")) {
+            test = 1;
         }
         else if (!strcmp(argv[i], "-o") && i + 1 < argc) {
             viewer = argv[++i];
@@ -142,6 +149,11 @@ int main(int argc, char *argv[])
 
         if (tmp_pnm)
             remove(pnm_input);
+    }
+
+    if (test) {
+        clock_t end_time = clock();
+        printf("Temps d'exécution : %.3f secondes\n", (double)(end_time - start_time) / CLOCKS_PER_SEC);
     }
 
     return 0;
