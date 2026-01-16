@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
         if (viewer) {
             char cmd[512];
             snprintf(cmd, sizeof cmd, "%s %s &", viewer, out);
+            system(cmd);
             return 0;
         }
     }
