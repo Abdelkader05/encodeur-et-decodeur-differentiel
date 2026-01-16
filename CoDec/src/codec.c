@@ -342,17 +342,17 @@ int pnmtodif(const char *pnm, const char *dif) {
     unsigned char *folded = NULL;
     replier(deltas, len, &folded);
 
-    BitStream bs;
-    bs_init(&bs, len * 2 + 16);
+    BitStream *bs = malloc(sizeof(BitStream));
+    bs_init(bs, len * 2 + 16);
 
     for (size_t i = 0; i < len; i++) {
         unsigned int y = folded[i];
-        if (y < 2)       { bs_push_bits(&bs, 0b0,   1); bs_push_bits(&bs, y,       1); }
-        else if (y < 6)  { bs_push_bits(&bs, 0b10,  2); bs_push_bits(&bs, y - 2,   2); }
-        else if (y < 22) { bs_push_bits(&bs, 0b110, 3); bs_push_bits(&bs, y - 6,   4); }
-        else             { bs_push_bits(&bs, 0b111, 3); bs_push_bits(&bs, y - 22,  8); }
+        if (y < 2)       { bs_push_bits(bs, 0b0,   1); bs_push_bits(bs, y,       1); }
+        else if (y < 6)  { bs_push_bits(bs, 0b10,  2); bs_push_bits(bs, y - 2,   2); }
+        else if (y < 22) { bs_push_bits(bs, 0b110, 3); bs_push_bits(bs, y - 6,   4); }
+        else             { bs_push_bits(bs, 0b111, 3); bs_push_bits(bs, y - 22,  8); }
     }
-    bs_flush(&bs);
+    bs_flush(bs);
 
     FILE *f = fopen(dif, "wb");
     if (!f) return DIF_ERR_IO;
@@ -370,11 +370,11 @@ int pnmtodif(const char *pnm, const char *dif) {
     if (fwrite(header, 1, 7 + nb_levels, f) != (size_t)(7 + nb_levels)) { fclose(f); return DIF_ERR_IO; }
 
     fwrite(premiers, 1, img.type, f);
-    fwrite(bs.buf, 1, bs.idx, f);
+    fwrite(bs->buf, 1, bs->idx, f);
 
     fclose(f);
 
-    bs_free(&bs);
+    bs_free(bs);
     free(folded);
     free(deltas);
     free(premiers);
