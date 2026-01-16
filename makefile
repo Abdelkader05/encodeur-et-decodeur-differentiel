@@ -7,11 +7,9 @@ LPATH := CoDec/
 PFLAGS :=  -I$(LPATH)include
 CFLAGS := -Wall -O2
 
-# répertoire où se trouve la lib. (truc.h|libtruc.so)
 
-LFLAGS := -lm -Wl,-rpath,$(LPATH)lib -L$(LPATH) -lcodec
+LFLAGS := -lm -Wl,-rpath,$(LPATH)lib -L$(LPATH)lib -lcodec
 
-# Build the codec library first
 .PHONY: codec
 
 # executable quelconque utilisant uniquement libtruc.so

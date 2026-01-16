@@ -7,7 +7,7 @@ CFLAGS := -Wall -O2 -fPIC
 LFLAGS := -shared
 
 
-$(LIB)libcodec.so: codec.o
+lib/libcodec.so: codec.o
 	$(CC) $(LFLAGS) $< -o $@
 
 %.o : $(SRC)%.c
