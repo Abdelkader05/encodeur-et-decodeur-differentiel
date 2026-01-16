@@ -1,4 +1,4 @@
-#include "../include/codec.h"
+#include "codec.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
